@@ -14,23 +14,37 @@ def main():
     st.title("⏰ Despertador por geolocalización")
     st.write("By Alejandro D.")
 
-    radio_alarma = st.slider("Radio de la alarma", 200, 1000, 1)
+    radio_alarma = st.slider("Radio de la alarma", 100, 1000, 500)
 
-    # Permitimos al usuario seleccionar la ub. actual y la zona objetivo
-    st.subheader("📍 Introduce tu ubicación actual")
-    lat_actual = st.number_input("Latitud actual", value=28.10, format="%.6f")  # value == valor por defecto
-    lon_actual = st.number_input("Longitud actual", value=-15.43, format="%.6f")
-    ubicacion_actual = (lat_actual, lon_actual)
+    # Selección de la ubicación actual o zona objetivo
+    modo = st.radio("¿Qué quieres seleccionar?", ["Ubicación actual", "Zona objetivo"])
 
-    st.subheader("🎯 Introduce la zona objetivo")
-    lat_objetivo = st.number_input("Latitud objetivo", value=28.1235, format="%.6f")
-    lon_objetivo = st.number_input("Longitud objetivo", value=-15.4366, format="%.6f")
-    zona_objetivo = (lat_objetivo, lon_objetivo)
-    
+    st.session_state.setdefault("ubicacion_actual", (28.10, -15.43)) # Valores por defecto
+    st.session_state.setdefault("zona_objetivo", (28.1235, -15.4366))
+    ubicacion_actual = st.session_state.ubicacion_actual
+    zona_objetivo = st.session_state.zona_objetivo
+
     controles_alarma_sin_ruta()
 
     mapa = crear_mapa(ubicacion_actual, zona_objetivo, radio_alarma)
     st_data = st_folium(mapa, width=700, height=500)  # Mostramos el mapa en Streamlit
+
+   # Detectar si se hizo clic y guardar en el session_state
+    clic = st_data.get("last_clicked")
+
+    if clic and (clic["lat"], clic["lng"]) != st.session_state.get("last_click_coord"):
+        coord = (clic["lat"], clic["lng"])
+        st.session_state["last_click_coord"] = coord  # Guarda la última coordenada clicada
+
+        if modo == "Ubicación actual":
+            st.session_state.ubicacion_actual = coord
+        else:
+            st.session_state.zona_objetivo = coord
+
+    # Recuperar siempre los valores del session_state
+    ubicacion_actual = st.session_state.ubicacion_actual
+    zona_objetivo = st.session_state.zona_objetivo
+
 
     distancia = calcular_distancia(ubicacion_actual, zona_objetivo)
     logica_alarma(distancia, radio_alarma)
