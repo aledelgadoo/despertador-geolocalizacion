@@ -5,7 +5,7 @@ from geopy.distance import geodesic
 
 # Titulos y texto que se mostrará en la página web
 st.title("⏰ Despertador por geolocalización")
-st.title("Mapa básico con Folium")
+st.write("By Alejandro D.")
 
 # Creamos un slider para la longitud y latitud actual
 # slider -> ("Texto que verá el usuario", valor min, valor max, valor por defecto, precisión)
@@ -14,6 +14,17 @@ lon_actual = st.slider("Longitud actual", -15.6, -15.3, -15.43, 0.0001)
 pos_actual = (lat_actual, lon_actual)
 
 radio_alarma = 500 # metros
+
+# Activar/Desactivar alarma
+st.session_state.setdefault("alarma_activada", False) # Variable alarma_activada por defecto False
+
+if st.button("🔘 Activar alarma"):
+    st.session_state.alarma_activada = True
+
+if st.button("🛑 Desactivar alarma"):
+    st.session_state.alarma_activada = False
+
+st.info(f"Estado de la alarma: {st.session_state.alarma_activada}") # Mostramos estado alarma
 
 # Creamos el mapa centrado en esa ubicación
 mapa = folium.Map(location=pos_actual, zoom_start=13)
@@ -44,7 +55,10 @@ distancia = geodesic(pos_actual, zona_objetivo).meters
 st.write(f"Distancia actual: {distancia:.2f}metros")
 
 # Lógica de la alarma
-if distancia <= radio_alarma: # Dentro de la zona objetivo
-    st.success("¡¡¡¡¡¡DESPIERTA!!!!!!!")
+if st.session_state.alarma_activada:
+    if distancia <= radio_alarma: # Dentro de la zona objetivo
+        st.success("¡¡¡¡¡¡DESPIERTA!!!!!!!")
+    else:
+        st.success("Todavía no ha sonado la alarma, descansa...")
 else:
-    st.success("Todavía no ha sonado la alarma, descansa...")
+    st.warning("La alarma no está encendida")
