@@ -16,14 +16,44 @@ def main():
 
     radio_alarma = st.slider("Radio de la alarma", 100, 1000, 500)
 
-    modo, ubicacion_actual, zona_objetivo = seleccionar_ubicaciones()
+    modo, ubicacion_actual, zona_objetivo = set_ubicaciones()
 
     controles_alarma_sin_ruta()
 
     mapa = crear_mapa(ubicacion_actual, zona_objetivo, radio_alarma)
     st_data = st_folium(mapa, width=700, height=500)  # Mostramos el mapa en Streamlit
 
-   # Detectar si se hizo clic y guardar en el session_state
+    ubicacion_actual, zona_objetivo = actualizar_ubicaciones_por_clic(st_data, modo)
+
+    # Recuperar siempre los valores del session_state
+    ubicacion_actual = st.session_state.ubicacion_actual
+    zona_objetivo = st.session_state.zona_objetivo
+
+
+    distancia = calcular_distancia(ubicacion_actual, zona_objetivo)
+    logica_alarma(distancia, radio_alarma)
+
+
+def set_ubicaciones():
+    '''
+    Inicializa los valores iniciales para las ubicaciones.
+    '''
+    # Selección de la ubicación actual o zona objetivo
+    modo = st.radio("¿Qué quieres seleccionar?", ["Ubicación actual", "Zona objetivo"])
+
+    st.session_state.setdefault("ubicacion_actual", (28.10, -15.43)) # Valores por defecto
+    st.session_state.setdefault("zona_objetivo", (28.1235, -15.4366))
+    ubicacion_actual = st.session_state.ubicacion_actual
+    zona_objetivo = st.session_state.zona_objetivo
+
+    return modo, ubicacion_actual, zona_objetivo
+
+
+def actualizar_ubicaciones_por_clic(st_data, modo):
+    """
+    Detecta el clic en el mapa y actualiza las coordenadas en st.session_state según el modo ("Ubicación actual" o "Zona objetivo").
+    Devuelve las ubicaciones actualizadas.
+    """
     clic = st_data.get("last_clicked")
 
     if clic and (clic["lat"], clic["lng"]) != st.session_state.get("last_click_coord"):
@@ -38,24 +68,9 @@ def main():
     # Recuperar siempre los valores del session_state
     ubicacion_actual = st.session_state.ubicacion_actual
     zona_objetivo = st.session_state.zona_objetivo
+    
+    return ubicacion_actual, zona_objetivo
 
-
-    distancia = calcular_distancia(ubicacion_actual, zona_objetivo)
-    logica_alarma(distancia, radio_alarma)
-
-def seleccionar_ubicaciones():
-    '''
-    Permite seleccionar la ubicación actual o la zona objetivo haciendo click en el mapa.
-    '''
-    # Selección de la ubicación actual o zona objetivo
-    modo = st.radio("¿Qué quieres seleccionar?", ["Ubicación actual", "Zona objetivo"])
-
-    st.session_state.setdefault("ubicacion_actual", (28.10, -15.43)) # Valores por defecto
-    st.session_state.setdefault("zona_objetivo", (28.1235, -15.4366))
-    ubicacion_actual = st.session_state.ubicacion_actual
-    zona_objetivo = st.session_state.zona_objetivo
-
-    return modo, ubicacion_actual, zona_objetivo
 
 def crear_mapa(pos_actual, zona_objetivo, radio_alarma, ruta=None):
     '''
