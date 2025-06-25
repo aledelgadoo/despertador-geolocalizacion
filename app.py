@@ -42,6 +42,7 @@ def main():
     distancia = calcular_distancia(ubicacion_actual, zona_objetivo)
     logica_alarma(distancia, radio_alarma)
 
+
 def avanzar_ruta(ruta):
     # Botón para avanzar en la ruta
     if st.button("🚶 Avanzar al siguiente punto"):
