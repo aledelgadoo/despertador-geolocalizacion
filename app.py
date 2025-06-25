@@ -161,6 +161,7 @@ def logica_alarma(distancia, radio_alarma):
     # Lógica de la alarma
     if st.session_state.alarma_activada:
         if distancia <= radio_alarma: # Dentro de la zona objetivo
+            reproducir_sonido()
             st.success("¡¡¡¡¡¡DESPIERTA!!!!!!!")
         else:
             st.success("Todavía no ha sonado la alarma, descansa...")
@@ -173,6 +174,17 @@ def calcular_distancia(p1, p2):
     Calcula la distancia entre 2 puntos, en metros.
     '''
     return geodesic(p1,p2).meters
+
+
+def reproducir_sonido():
+      st.markdown(
+        """
+        <audio autoplay>
+          <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
+        </audio>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 if __name__ == "__main__":
