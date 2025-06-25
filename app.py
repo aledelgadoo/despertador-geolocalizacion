@@ -14,7 +14,7 @@ def main():
     st.title("⏰ Despertador por geolocalización")
     st.write("By Alejandro D.")
 
-    radio_alarma = 500 # metros
+    radio_alarma = st.slider("Radio de la alarma", 200, 1000, 1)
 
     # Permitimos al usuario seleccionar la ub. actual y la zona objetivo
     st.subheader("📍 Introduce tu ubicación actual")
