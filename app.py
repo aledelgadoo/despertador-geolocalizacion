@@ -20,7 +20,16 @@ def main():
 
     controles_alarma_sin_ruta()
 
-    mapa = crear_mapa(ubicacion_actual, zona_objetivo, radio_alarma)
+    # Inicializamos paso
+    if "paso" not in st.session_state:
+        st.session_state.paso = 0
+
+    # Creamos ruta simulada entre ubicacion_actual y zona_objetivo
+    ruta = crear_ruta_simulada(ubicacion_actual, zona_objetivo, pasos=20)
+
+    avanzar_ruta(ruta)
+
+    mapa = crear_mapa(ubicacion_actual, zona_objetivo, radio_alarma, ruta)
     st_data = st_folium(mapa, width=700, height=500)  # Mostramos el mapa en Streamlit
 
     ubicacion_actual, zona_objetivo = actualizar_ubicaciones_por_clic(st_data, modo)
@@ -29,9 +38,31 @@ def main():
     ubicacion_actual = st.session_state.ubicacion_actual
     zona_objetivo = st.session_state.zona_objetivo
 
-
+    
     distancia = calcular_distancia(ubicacion_actual, zona_objetivo)
     logica_alarma(distancia, radio_alarma)
+
+def avanzar_ruta(ruta):
+    # Botón para avanzar en la ruta
+    if st.button("🚶 Avanzar al siguiente punto"):
+        if st.session_state.paso < len(ruta) - 1:
+            st.session_state.paso += 1
+            st.session_state.ubicacion_actual = ruta[st.session_state.paso]
+
+
+def crear_ruta_simulada(p1, p2, pasos=10):
+    '''
+    Crea una lista de coordenadas entre p1 y p2.
+    '''
+    lat1, lon1 = p1
+    lat2, lon2 = p2
+
+    ruta = []
+    for i in range(pasos + 1):
+        lat = lat1 + (lat2 - lat1) * i / pasos
+        lon = lon1 + (lon2 - lon1) * i / pasos
+        ruta.append((lat, lon))
+    return ruta
 
 
 def set_ubicaciones():
@@ -105,7 +136,6 @@ def crear_mapa(pos_actual, zona_objetivo, radio_alarma, ruta=None):
     return mapa
 
 
-def controles_alarma(ruta):
     '''
     Permite activar/desactivar la alarma, muestra el estado actual. 
     Contiene también el botón para avanzar por la ruta.
