@@ -16,13 +16,7 @@ def main():
 
     radio_alarma = st.slider("Radio de la alarma", 100, 1000, 500)
 
-    # Selección de la ubicación actual o zona objetivo
-    modo = st.radio("¿Qué quieres seleccionar?", ["Ubicación actual", "Zona objetivo"])
-
-    st.session_state.setdefault("ubicacion_actual", (28.10, -15.43)) # Valores por defecto
-    st.session_state.setdefault("zona_objetivo", (28.1235, -15.4366))
-    ubicacion_actual = st.session_state.ubicacion_actual
-    zona_objetivo = st.session_state.zona_objetivo
+    modo, ubicacion_actual, zona_objetivo = seleccionar_ubicaciones()
 
     controles_alarma_sin_ruta()
 
@@ -49,6 +43,19 @@ def main():
     distancia = calcular_distancia(ubicacion_actual, zona_objetivo)
     logica_alarma(distancia, radio_alarma)
 
+def seleccionar_ubicaciones():
+    '''
+    Permite seleccionar la ubicación actual o la zona objetivo haciendo click en el mapa.
+    '''
+    # Selección de la ubicación actual o zona objetivo
+    modo = st.radio("¿Qué quieres seleccionar?", ["Ubicación actual", "Zona objetivo"])
+
+    st.session_state.setdefault("ubicacion_actual", (28.10, -15.43)) # Valores por defecto
+    st.session_state.setdefault("zona_objetivo", (28.1235, -15.4366))
+    ubicacion_actual = st.session_state.ubicacion_actual
+    zona_objetivo = st.session_state.zona_objetivo
+
+    return modo, ubicacion_actual, zona_objetivo
 
 def crear_mapa(pos_actual, zona_objetivo, radio_alarma, ruta=None):
     '''
