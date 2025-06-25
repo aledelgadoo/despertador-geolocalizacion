@@ -7,13 +7,21 @@ from geopy.distance import geodesic
 st.title("⏰ Despertador por geolocalización")
 st.write("By Alejandro D.")
 
-# Creamos un slider para la longitud y latitud actual
-# slider -> ("Texto que verá el usuario", valor min, valor max, valor por defecto, precisión)
-lat_actual = st.slider("Latitud actual", 28.0, 28.3, 28.10, 0.0001)
-lon_actual = st.slider("Longitud actual", -15.6, -15.3, -15.43, 0.0001)
-pos_actual = (lat_actual, lon_actual)
-
 radio_alarma = 500 # metros
+
+# Simulamos una ruta (una lista de coordenadas)
+ruta = [
+    (28.1000, -15.4600),
+    (28.1050, -15.4500),
+    (28.1100, -15.4450),
+    (28.1150, -15.4400),
+    (28.1200, -15.4370),
+    (28.1235, -15.4366),
+]
+st.session_state.setdefault("paso", 0) # Variable paso por defecto 0
+
+# Posición actual simulada
+paso_actual = st.session_state.paso
 
 # Activar/Desactivar alarma
 st.session_state.setdefault("alarma_activada", False) # Variable alarma_activada por defecto False
@@ -26,8 +34,17 @@ if st.button("🛑 Desactivar alarma"):
 
 st.info(f"Estado de la alarma: {st.session_state.alarma_activada}") # Mostramos estado alarma
 
+# Botón para avanzar por la ruta
+if st.button("🚶 Avanzar al siguiente punto"):
+    if st.session_state.paso < len(ruta) - 1:
+        st.session_state.paso += 1
+pos_actual = ruta[st.session_state.paso]
+
 # Creamos el mapa centrado en esa ubicación
 mapa = folium.Map(location=pos_actual, zoom_start=13)
+
+# Unimos las coordenadas para mejor visibilidad
+folium.PolyLine(ruta, color="green", weight=2.5, opacity=1).add_to(mapa)
 
 # Ponemos un marcador en esa ubicación
 folium.Marker(
