@@ -15,25 +15,24 @@ def main():
     st.write("By Alejandro D.")
 
     radio_alarma = 500 # metros
-    zona_objetivo = (28.1235, -15.4366)
 
-    # Simulamos una ruta (una lista de coordenadas)
-    ruta = [
-        (28.1000, -15.4600),
-        (28.1050, -15.4500),
-        (28.1100, -15.4450),
-        (28.1150, -15.4400),
-        (28.1200, -15.4370),
-        (28.1235, -15.4366),
-    ]
+    # Permitimos al usuario seleccionar la ub. actual y la zona objetivo
+    st.subheader("📍 Introduce tu ubicación actual")
+    lat_actual = st.number_input("Latitud actual", value=28.10, format="%.6f")  # value == valor por defecto
+    lon_actual = st.number_input("Longitud actual", value=-15.43, format="%.6f")
+    ubicacion_actual = (lat_actual, lon_actual)
 
-    controles_alarma(ruta)
-    pos_actual = ruta[st.session_state.paso]
+    st.subheader("🎯 Introduce la zona objetivo")
+    lat_objetivo = st.number_input("Latitud objetivo", value=28.1235, format="%.6f")
+    lon_objetivo = st.number_input("Longitud objetivo", value=-15.4366, format="%.6f")
+    zona_objetivo = (lat_objetivo, lon_objetivo)
+    
+    controles_alarma_sin_ruta()
 
-    mapa = crear_mapa(pos_actual, zona_objetivo, radio_alarma, ruta)
+    mapa = crear_mapa(ubicacion_actual, zona_objetivo, radio_alarma)
     st_data = st_folium(mapa, width=700, height=500)  # Mostramos el mapa en Streamlit
 
-    distancia = calcular_distancia(pos_actual, zona_objetivo)
+    distancia = calcular_distancia(ubicacion_actual, zona_objetivo)
     logica_alarma(distancia, radio_alarma)
 
 
@@ -96,6 +95,22 @@ def controles_alarma(ruta):
             avanzar = True
     
     return avanzar
+
+
+def controles_alarma_sin_ruta():
+    '''
+    Muestra botones para activar o desactivar la alarma
+    y el estado actual de la misma.
+    '''
+    st.session_state.setdefault("alarma_activada", False)
+
+    if st.button("🔘 Activar alarma"):
+        st.session_state.alarma_activada = True
+
+    if st.button("🛑 Desactivar alarma"):
+        st.session_state.alarma_activada = False
+
+    st.info(f"Estado de la alarma: {st.session_state.alarma_activada}")
 
 
 def logica_alarma(distancia, radio_alarma):
