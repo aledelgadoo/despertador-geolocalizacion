@@ -98,33 +98,6 @@ def crear_mapa(pos_actual, zona_objetivo, radio_alarma, ruta=None):
     return mapa
 
 
-    '''
-    Permite activar/desactivar la alarma, muestra el estado actual. 
-    Contiene también el botón para avanzar por la ruta.
-    '''
-    # Valores default de los session_state
-    st.session_state.setdefault("paso", 0)
-    st.session_state.setdefault("alarma_activada", False)
-
-    if st.button("🔘 Activar alarma"):
-        st.session_state.alarma_activada = True
-
-    if st.button("🛑 Desactivar alarma"):
-        st.session_state.alarma_activada = False
-
-    # Mostramos estado actual de la alarma
-    st.info(f"Estado de la alarma: {st.session_state.alarma_activada}")
-
-    # Botón para avanzar por la ruta
-    avanzar = False
-    if st.button("🚶 Avanzar al siguiente punto"):
-        if st.session_state.paso < len(ruta) - 1:
-            st.session_state.paso += 1
-            avanzar = True
-    
-    return avanzar
-
-
 def controles_alarma_sin_ruta():
     '''
     Muestra botones para activar o desactivar la alarma
