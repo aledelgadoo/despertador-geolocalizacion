@@ -13,8 +13,6 @@ st.write("Haz click en el mapa para fijar la coordenada de la ubicación que qui
 
 # Mostrar la coordenada seleccionada
 if "ultima_coord_clicada" in st.session_state:
-    st.info(f"Coordenada seleccionada: {st.session_state['ultima_coord_clicada']}")
-
     # Botón para confirmar selección
     if st.button("✅ Confirmar ubicación seleccionada"):
         if st.session_state.modo == "Ubicación actual":
@@ -25,6 +23,6 @@ if "ultima_coord_clicada" in st.session_state:
 
 mapa = crear_mapa(st.session_state.ubicacion_actual, st.session_state.zona_objetivo, st.session_state.radio_alarma)
 st_data = st_folium(mapa, width=700, height=500)  # Mostramos el mapa en Streamlit
-
-
+if "ultima_coord_clicada" in st.session_state:
+    st.info(f"Coordenada seleccionada: {st.session_state['ultima_coord_clicada']}")
 actualizar_ubicaciones_por_clic(st_data)

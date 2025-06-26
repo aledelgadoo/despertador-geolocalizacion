@@ -102,7 +102,8 @@ def controles_alarma_sin_ruta():
     if st.button("🛑 Desactivar alarma"):
         st.session_state.alarma_activada = False
 
-    st.info(f"Estado de la alarma: {st.session_state.alarma_activada}")
+    st.info(f"Estado de la alarma: {'ACTIVADA' if st.session_state.alarma_activada else 'DESACTIVADA'}")
+
 
 
 def logica_alarma(distancia, radio_alarma):
