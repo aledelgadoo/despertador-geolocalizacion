@@ -2,6 +2,10 @@
 
 Una aplicación interactiva desarrollada con **Streamlit** que permite establecer una zona geográfica como objetivo para activar una alarma cuando el usuario se acerque a ella. Ideal para viajeros, estudiantes o quienes necesitan despertarse en función de su ubicación y no de una hora específica.
 
+
+## 🚧 Nota importante
+> Esta aplicación es una simulación web del funcionamiento de una alarma basada en geolocalización.
+> El objetivo final es desarrollar una versión móvil que utilice la ubicación en tiempo real y notificaciones nativas para funcionar como un despertador inteligente en trayectos.
 ---
 
 ## 🚀 Funcionalidades
