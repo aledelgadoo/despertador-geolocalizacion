@@ -42,21 +42,12 @@ def set_ubicaciones():
     return modo, ubicacion_actual, zona_objetivo
 
 
-def actualizar_ubicaciones_por_clic(st_data, modo):
-    """
-    Detecta el clic en el mapa y actualiza las coordenadas en st.session_state según el modo ("Ubicación actual" o "Zona objetivo").
-    Devuelve las ubicaciones actualizadas.
-    """
+def actualizar_ubicaciones_por_clic(st_data):
     clic = st_data.get("last_clicked")
 
-    if clic and (clic["lat"], clic["lng"]) != st.session_state.get("last_click_coord"):
-        coord = (clic["lat"], clic["lng"])
-        st.session_state["last_click_coord"] = coord  # Guarda la última coordenada clicada
+    if clic:
+        st.session_state["ultima_coord_clicada"] = (clic["lat"], clic["lng"])
 
-        if modo == "Ubicación actual":
-            st.session_state.ubicacion_actual = coord
-        else:
-            st.session_state.zona_objetivo = coord
 
     # Recuperar siempre los valores del session_state
     ubicacion_actual = st.session_state.ubicacion_actual
